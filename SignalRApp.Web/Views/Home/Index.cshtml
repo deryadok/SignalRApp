@@ -7,7 +7,7 @@
 
     <script type="text/javascript">
         $(document).ready(() => {
-            var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:7267/MyHub").build();
+            var connection = new signalR.HubConnectionBuilder().configureLogging(signalR.LogLevel.Debug).withAutomaticReconnect().withUrl("https://localhost:5001/MyHub").build();
 
             $("#conStatus").text(connection.state);
 
