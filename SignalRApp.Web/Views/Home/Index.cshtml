@@ -7,18 +7,51 @@
 
     <script type="text/javascript">
         $(document).ready(() => {
-            var connection = new signalR.HubConnectionBuilder().configureLogging(signalR.LogLevel.Debug).withAutomaticReconnect().withUrl("https://localhost:5001/MyHub").build();
+            //.configureLogging(signalR.LogLevel.Debug)
 
-            $("#conStatus").text(connection.state);
+            var connection = new signalR.HubConnectionBuilder().withAutomaticReconnect([1000, 3000, 3000, 2000]).withUrl("https://localhost:5001/MyHub").build();
 
-            connection.start().then(() => {
+            function statusShow() {
                 $("#conStatus").text(connection.state);
-            }).catch((err) => { console.log(err) });
+            }
 
+            function start() {
+                connection.start().then(() => {
+                    $('#loading').hide();
+                    statusShow();
+                }).catch((err) => { 
+                    console.log(err); 
+                    setTimeout(() => start(), 2000) 
+                });
+            }
+
+            statusShow();
+            start();
+
+            connection.onreconnecting(err => {
+                $('#loading').show();
+                statusShow();
+                console.log("onreconnection " + err);
+            })
+
+            connection.onreconnected(connectionId => {
+                $('#loading').hide();
+                statusShow();
+                console.log("connectionId: " + connectionId);
+            });
+
+            connection.onclose(connectionId => {
+                $('#loading').hide();
+                statusShow();
+                start();
+            });
+
+            //Clicks
             $("#btnSave").click(() => {
                 connection.invoke("SendMessage", $("#txtMsg").val()).catch((err) => console.log(err));
             });
 
+            //onMethods
             connection.on("RecieveMessage", (message) => {
                 $("#messageList").append(`<li class="list-group-item"> ${message} </li>`)
             });
@@ -29,10 +62,18 @@
 <div class="row">
     <div class="col-md-8 offset-2">
         <input class="form-control" type="text" id="txtMsg" />
-        <hr/>
+        <hr />
         <button class="btn btn-primary" id="btnSave">Mesaj Kaydet</button>
         <div class="alert alert-info">
-            Bağlantı durumu: <strong id="conStatus"></strong>
+            <div class="float-start">
+                Bağlantı durumu: <strong id="conStatus"></strong>
+            </div>
+            <div class="float-end">
+                <div id="loading" class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <div class="clearfix"></div>
         </div>
     </div>
 
