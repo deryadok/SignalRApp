@@ -19,7 +19,9 @@ namespace SignalRApp.API.Controllers
         [HttpGet("{teamCount}")]
         public async Task<IActionResult> SetTeamCount(int teamCount)
         {
-            await _hubContext.Clients.All.SendAsync("Notify", $"Takım {teamCount} kişi olacaktır.");
+            MyHub.TeamCount = teamCount;
+
+            await _hubContext.Clients.All.SendAsync("Notify", $"Mesajlar {teamCount} sayısı kadar sınırlandırılmıştır.");
 
             return Ok();
         }

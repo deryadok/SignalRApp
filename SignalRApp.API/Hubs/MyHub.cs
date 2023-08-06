@@ -8,13 +8,22 @@ namespace SignalRApp.API.Hubs
 
         private static int ClientCount { get; set; } = 0;
 
+        public static int TeamCount { get; set; } = 7;
+
         public async Task SendMessage(string message)
         {
-            Messages.Add(message);
-            await Clients.All.SendAsync("RecieveMessage", message);
+            if (Messages.Count >= TeamCount)
+            {
+                await Clients.Caller.SendAsync("Error", $"Mesajlar {TeamCount} sayısı kadar sınırlandırılmıştır.");
+            }
+            else
+            {
+                Messages.Add(message);
+                await Clients.All.SendAsync("RecieveMessage", message); 
+            }
         }
 
-        public async Task GetMessage()
+        public async Task GetMessages()
         {
             await Clients.All.SendAsync("RecieveMessages", Messages);
         }

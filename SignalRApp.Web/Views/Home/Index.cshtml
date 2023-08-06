@@ -18,6 +18,9 @@
             function start() {
                 connection.start().then(() => {
                     $('#loading').hide();
+
+                    connection.invoke("GetMessages");
+
                     statusShow();
                 }).catch((err) => { 
                     console.log(err); 
@@ -52,8 +55,20 @@
             });
 
             connection.on("Notify", (countText) => {
-                $("#notify").html(`<div class="alert alert-success">${countText}</div>`)
-            })
+                $("#notify").html(`<div class="alert alert-success">${countText}</div>`);
+            });
+
+            connection.on("Error", (errorText) => {
+                alert(errorText);
+            });
+
+            connection.on("RecieveMessages", (messages) => {
+                $("#messageList").empty();
+
+                messages.forEach((item, index) => {
+                    $("#messageList").append(`<li class="list-group-item"> ${item} </li>`);
+                });
+            });
 
             //Clicks
             $("#btnSave").click(() => {
@@ -62,7 +77,7 @@
 
             //onMethods
             connection.on("RecieveMessage", (message) => {
-                $("#messageList").append(`<li class="list-group-item"> ${message} </li>`)
+                $("#messageList").append(`<li class="list-group-item"> ${message} </li>`);
             });
         });
     </script>
@@ -85,9 +100,7 @@
             </div>
             <div class="clearfix"></div>
         </div>
-
         <div id="notify" >
-
         </div>
     </div>
 
