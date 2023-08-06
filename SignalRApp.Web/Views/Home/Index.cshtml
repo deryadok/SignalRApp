@@ -51,6 +51,10 @@
                 $('#clientCount').text(clientCount);
             });
 
+            connection.on("Notify", (countText) => {
+                $("#notify").html(`<div class="alert alert-success">${countText}</div>`)
+            })
+
             //Clicks
             $("#btnSave").click(() => {
                 connection.invoke("SendMessage", $("#txtMsg").val()).catch((err) => console.log(err));
@@ -80,6 +84,10 @@
                 </div>
             </div>
             <div class="clearfix"></div>
+        </div>
+
+        <div id="notify" >
+
         </div>
     </div>
 
