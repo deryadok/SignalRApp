@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using SignalRApp.API.Hubs;
+using SignalRApp.API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
+builder.Services.AddDbContext<AppDbContext>(opt =>
+{
+    opt.UseSqlServer(builder.Configuration["ConnectionString"]);
+});
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder =>
