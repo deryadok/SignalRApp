@@ -67,16 +67,16 @@ namespace SignalRApp.API.Hubs
 
             await _context.SaveChangesAsync();
 
-            await Clients.Group(teamName).SendAsync("RecieveMessageByGroup", name, teamName);
+            await Clients.Group(teamName).SendAsync("RecieveMessageByGroup", name, team.Id);
         }
 
         public async Task GetNamesByGroup()
         {
-            var teams = _context.Teams.Include(x => x.Users).Select(x => new
+            var teams = _context.Teams.Include(x => x.Users).Select(x => new 
             {
-                teamName = x.Name,
-                Users = x.Users
-            });
+                teamId = x.Id,
+                users = x.Users.ToList()
+            }).ToList();
 
             await Clients.All.SendAsync("RecieveNamesByGroup", teams);
         }
