@@ -107,6 +107,10 @@
 
             });
 
+            connection.on("RecieveProduct", (product) => {
+                console.log(product);
+            });
+
             //Clicks
             $("#btnSave").click(() => {
                 connection.invoke("SendMessage", $("#txtMsg").val()).catch((err) => console.log(err));
@@ -124,6 +128,11 @@
                 connection.invoke("SendNameByGroup", name, teamName).catch((err) => {
                     console.log(err);
                 });
+            });
+
+            $("#btnProduct").click(() => {
+                let product = { "Id": 1, "Name": "Kalem", "Price": 100, "Stock": 100 };
+                connection.invoke("SendProduct", product);
             });
 
             $("input[type=radio]").change(() => {
@@ -172,6 +181,7 @@
         <hr />
         <button class="btn btn-primary" id="btnSave">Mesaj Kaydet</button>
         <button class="btn btn-warning" id="btnTeam">Takıma Kaydet</button>
+        <button class="btn btn-danger" id="btnProduct">Ürün Gönder</button>
         <div class="alert alert-info mt-2">
             <div class="float-start">
                 Bağlantı durumu: <strong id="conStatus"></strong>

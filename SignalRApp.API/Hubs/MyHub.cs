@@ -19,6 +19,11 @@ namespace SignalRApp.API.Hubs
 
         public static int TeamCount { get; set; } = 7;
 
+        public async Task SendProduct(Product p)
+        {
+            await Clients.All.SendAsync("RecieveProduct", p);
+        }
+
         public async Task SendMessage(string message)
         {
             if (Messages.Count >= TeamCount)
